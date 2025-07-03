@@ -1,0 +1,52 @@
+#version: '3.9'
+
+networks:
+    tig-net:
+        driver: bridge
+
+volumes:
+    tig-data:
+    grafana-data:
+
+services:
+    influxdb:
+        image: influxdb:latest
+        container_name: influxdb
+        ports:
+            - 8086:8086
+        environment:
+            - DOCKER_INFLUXDB_INIT_MODE=setup
+            - DOCKER_INFLUXDB_INIT_USERNAME={your_username} #change
+            - DOCKER_INFLUXDB_INIT_PASSWORD={your_password} #change
+            - DOCKER_INFLUXDB_INIT_ORG={your_organization} #change
+            - DOCKER_INFLUXDB_INIT_BUCKET={your_bucket} #change
+            - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN={your_token} #change
+        networks:
+            - tig-net
+        volumes:
+            - tig-data:/var/lib/influxdb2
+
+    grafana:
+        image: grafana/grafana:latest
+        container_name: grafana
+        ports:
+            - 3000:3000
+        environment:
+            GF_SECURITY_ADMIN_USER: {your_email} #change
+            GF_SECURITY_ADMIN_PASSWORD: {your_password} #change
+        networks:
+            - tig-net
+        volumes:
+            - grafana-data:/var/lib/grafana
+        restart: always
+
+    telegraf:
+        image: telegraf:latest
+        container_name: telegraf
+        depends_on: #starts after influxdb
+            - influxdb         	
+        volumes:
+            - ./telegraf.conf:/etc/telegraf/telegraf.conf
+        networks:
+            - tig-net
+        restart: always
