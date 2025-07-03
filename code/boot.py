@@ -1,5 +1,6 @@
 # boot.py -- run on boot-up
 #Copied from course tutorial: https://hackmd.io/@lnu-iot/rJVQizwUh
+
 import keys
 import network
 from time import sleep
