@@ -1,10 +1,10 @@
-import machine
-from machine import ADC, Pin
-from time import sleep
-from dht import DHT11
-from simple import MQTTClient   #added a umqtt-simple file, Pico refused to collect from umqtt.simple
-import micropython            # Needed to run any MicroPython code
-import keys                   # Contain all keys used here
+import machine                 #Always needed, the Pico is the machine
+from machine import ADC, Pin   #For the machine to read Pin-data and data from analogue sensors
+from time import sleep         #So we can tell the Pico to sleep
+from dht import DHT11          #Needed to understand DHT11 data
+from simple import MQTTClient  #added a umqtt-simple file, Pico refused to collect from umqtt.simple
+import micropython             #Needed to run MicroPython code
+import keys                    #For your credentials
 
 #Use the MQTT protocol to connect to TIG stack
 client = MQTTClient(keys.CLIENT_ID, keys.MQTT_BROKER, port=keys.MQTT_PORT, user=keys.MQTT_USER, password=keys.MQTT_KEY)
@@ -46,12 +46,12 @@ def publish_temperature(client):
     except Exception as e:
         print(e)
         
-#Function to publish DHT11 humidity data to MQTT broker
+#Function to publish bightness to MQTT broker
 def publish_brightness(client):
     try:
         light = ldr.read_u16()
         brightness = 100-round(light / 65535 * 100, 1)
-        print("Publishing: Brightness: {}%".format(brightness))
+        print("Publishing: Brightness: {}%".format(brightness)) #calculation to relate the analog signal to a percentage of light
         client.publish(keys.MQTT_TOPIC_LIGHT, b"%.2f" % brightness)
     except Exception as e:
         print(e) 
@@ -93,19 +93,19 @@ try:
     connect_to_mqtt()  
     while True:
         try:
-            ambientsensor.measure()
+            ambientsensor.measure() #We need the first four lines to get the data for changing the LED
             temperature = ambientsensor.temperature()
             humidity = ambientsensor.humidity()
-            check_ambient(temperature, humidity)
-            publish_humidity(client)
-            publish_temperature(client)
-            publish_brightness(client)
+            check_ambient(temperature, humidity) #Will update the LED color
+            publish_humidity(client) #Publish data according to the previous definition
+            publish_temperature(client) #Publish data according to the previous definition
+            publish_brightness(client) #Publish data according to the previous definition
         except Exception as error:
-            print("Exception occurred", error)
-        sleep(60)
+            print("Exception occurred", error) #We get an error if something goes wrong
+        sleep(600) #then the Pico sleeps for 10 minutes before repeating the loop
     
-finally:
-    client.disconnect()   # ... disconnect the client and turn off LED
+finally: # ... disconnect the client and turn off LED
+    client.disconnect()   
     client = None
     LED_Pin_Red.value(0)
     LED_Pin_Green.value(0)
