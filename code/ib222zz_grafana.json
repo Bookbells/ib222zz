@@ -52,10 +52,10 @@
           "color": {
             "mode": "thresholds"
           },
-          "decimals": 1,
+          "decimals": 0,
           "mappings": [],
           "max": 40,
-          "min": 15,
+          "min": 10,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -100,7 +100,10 @@
         },
         "showThresholdLabels": true,
         "showThresholdMarkers": true,
-        "sizing": "auto"
+        "sizing": "auto",
+        "text": {
+          "valueSize": 40
+        }
       },
       "pluginVersion": "12.0.2",
       "targets": [
@@ -160,7 +163,7 @@
               "mode": "area"
             }
           },
-          "decimals": 1,
+          "decimals": 0,
           "mappings": [],
           "max": 40,
           "min": 10,
@@ -233,9 +236,9 @@
           "color": {
             "mode": "thresholds"
           },
-          "decimals": 1,
+          "decimals": 0,
           "mappings": [],
-          "max": 80,
+          "max": 90,
           "min": 20,
           "thresholds": {
             "mode": "absolute",
@@ -244,7 +247,7 @@
                 "color": "green"
               },
               {
-                "color": "orange",
+                "color": "yellow",
                 "value": 0
               },
               {
@@ -252,7 +255,7 @@
                 "value": 40
               },
               {
-                "color": "red",
+                "color": "blue",
                 "value": 70
               }
             ]
@@ -281,7 +284,10 @@
         },
         "showThresholdLabels": true,
         "showThresholdMarkers": true,
-        "sizing": "auto"
+        "sizing": "auto",
+        "text": {
+          "valueSize": 40
+        }
       },
       "pluginVersion": "12.0.2",
       "targets": [
@@ -352,7 +358,7 @@
                 "color": "green"
               },
               {
-                "color": "red",
+                "color": "yellow",
                 "value": 0
               },
               {
@@ -360,7 +366,7 @@
                 "value": 40
               },
               {
-                "color": "red",
+                "color": "blue",
                 "value": 70
               }
             ]
@@ -501,7 +507,7 @@
     }
   ],
   "preload": false,
-  "refresh": "10s",
+  "refresh": "1m",
   "schemaVersion": 41,
   "tags": [],
   "templating": {
@@ -527,12 +533,12 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Zero Weather",
   "uid": "HZvxOfy7k",
-  "version": 9
+  "version": 14
 }
