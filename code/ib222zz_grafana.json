@@ -21,7 +21,7 @@
       }
     ]
   },
-  "description": "DIY a simple weather station using a Raspberry Pi Zero W and a DHT22 temperature/humidity sensor.\r\n\r\nMore docs coming soon.",
+  "description": "An IoT aeroponics monitoring solution built as a school project in Linneaus University.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -128,7 +128,8 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "fixedColor": "text",
+            "mode": "fixed"
           },
           "custom": {
             "axisBorderShow": false,
@@ -312,7 +313,8 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "fixedColor": "text",
+            "mode": "fixed"
           },
           "custom": {
             "axisBorderShow": false,
@@ -418,7 +420,8 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "fixedColor": "text",
+            "mode": "fixed"
           },
           "custom": {
             "axisBorderShow": false,
@@ -507,7 +510,7 @@
     }
   ],
   "preload": false,
-  "refresh": "1m",
+  "refresh": "5m",
   "schemaVersion": 41,
   "tags": [],
   "templating": {
@@ -533,12 +536,13 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Zero Weather",
+  "title": "Aeroponics_monitoring",
   "uid": "HZvxOfy7k",
-  "version": 14
+  "version": 16,
+  "weekStart": "monday"
 }
