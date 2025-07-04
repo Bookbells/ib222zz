@@ -1,9 +1,7 @@
 # Tutorial on how to build an aeroponics monitoring system
 **Isabelle Berg - ib222zz**
 
-For HackMD version of the report (includes pictures and Table of Contents) go to: https://hackmd.io/@Bookbells/B1KtttMreg 
-
-[TOC]
+For HackMD version of the report go to: https://hackmd.io/@Bookbells/B1KtttMreg 
 
 ## Overview
 An aeroponics monitoring system was made using an RP2040 Raspberry Pi Pico WH as the microcontroller (MCU). The MCU was coupled with several sensors to measure ambient temperature, humidity, and light at the plant level of the system. This was coupled with an RGB LED light to provide a visual indication of whether the climate was within optimal parameters for the plants. To visualise the data, Grafana from a TIG-stack (Telegraf, InfluxDB, and Grafana) was coupled with Mosquitto MQTT code on the Pico. 
