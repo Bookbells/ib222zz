@@ -187,7 +187,7 @@ When new to Grafana I’d recommend downloading a finished dashboard and then al
 ![image](https://hackmd.io/_uploads/rkp4KbBSxl.png)	*Figure 8: A print-screen on how to add the JSON script to make a query in Grafana.*
 
 The temperature and humidity section in my Grafana looks like this:
-![image](https://hackmd.io/_uploads/BySUYbBrgx.png)
+![image](https://hackmd.io/_uploads/Sk-CpdtBxx.png)
 *Figure 9: A print-screen of a dashboard section from Grafana. Current and historic temperature and humidity readings, is shown. For temperature, cold climates will shift to blue, while too hot climates will shift to red. For humidity, we instead have yellow for too arid and blue for too humid. In both cases, optimal climates are green.*
 
 The data is refreshed every 5 minutes to collect new data from InfluxDB where the data is stored. As mentioned before, I chose this solution over Adafruit due to its more inclusive free version, which offers scalability, additional visualization options, including data conversions, and a wider range of customization options. Another benefit is that InfluxDB stores data indefinitely, making it easy to download for further analysis. 
