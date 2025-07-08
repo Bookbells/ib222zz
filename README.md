@@ -4,7 +4,7 @@
 For HackMD version of the report go to: https://hackmd.io/@Bookbells/B1KtttMreg 
 
 ## Overview
-An aeroponics monitoring system was made using an RP2040 Raspberry Pi Pico WH as the microcontroller (MCU). The MCU was coupled with several sensors to measure ambient temperature, humidity, and light at the plant level of the system. This was coupled with an RGB LED light to provide a visual indication of whether the climate was within optimal parameters for the plants. To visualise the data, Grafana from a TIG-stack (Telegraf, InfluxDB, and Grafana) was coupled with Mosquitto MQTT code on the Pico. 
+An aeroponics monitoring system was made using an RP2040 Raspberry Pi Pico WH as the microcontroller (MCU). The MCU was coupled with several sensors to measure ambient temperature, humidity, and light at the plant level, as well as humidity and temperature of the root level of the system. This was coupled with an RGB LED light to provide a visual indication of whether the climate was within optimal parameters for the plants. To visualise the data, Grafana from a TIG-stack (Telegraf, InfluxDB, and Grafana) was coupled with Mosquitto MQTT code on the Pico. 
 
 The approximate time to complete, with finished code and all hardware purchased, is 4-6 hours.
 
@@ -24,7 +24,7 @@ The acquired hardware, price, and supplier are listed in Table 1 below. This is 
 | [Light sensor](https://www.electrokit.com/ljussensor)     | Electro:kit     | 41015727     |39 sek|
 | [RGB LED-module](https://www.electrokit.com/led-modul-rgb)     | Electro:kit     | 41015715     |22 sek|
 
-In addition to the MCU and sensors, you will also need basic electrical components, including a breadboard, wires, and a power supply. A brief description of each component's function is provided in Table 2 below.
+Two DHT11 was used. In addition to the MCU and sensors, you will also need basic electrical components, including a breadboard, wires, and a power supply. A brief description of each component's function is provided in Table 2 below.
 
 **Table 2:** Short descriptions of components
 
@@ -59,11 +59,12 @@ Fritzing is entirely voluntary and not required for completing this project, I�
 ## Putting everything together
 Now comes the part where you connect all the hardware. I connected everything as shown in Figure 2. It’s essential to connect the power wires and ground correctly to prevent short-circuiting your Pico. Ground to “-“ sign, signal to “S”. Double-check the nodes in data-sheets for the module. Double-check all wires before connecting the Pico to the computer or power source.
 
-An important note here is that sometimes the nodes on the smaller modules can be switched, as was the case both for my LDR and the RGB LED light. In my comment, you can see why I, in my case, had to switch the connections for signal and ground; wires are shown as connected on my Pico. For the RBD LED, you couldn’t see the shift, and I didn’t have to rewire anything to correct it. However, it turned out when I was coding that the node marked as “R” was actually the green one, and the one marked “G” was the red one. It was easily fixed by changing the PIN in the code after some troubleshooting. So, start with connecting according to the datasheet, and then perform some smaller tests to ensure the modules are responding as expected before proceeding to more advanced code.
-![image](https://hackmd.io/_uploads/S1XtK3frge.png)
+An important note here is that sometimes the nodes on the smaller modules can be switched, as was the case both for my LDR and the RGB LED light. In my comment, you can see why I, in my case, had to switch the connections for signal and ground for the LDR module. For the RBD LED, you can't see the shift, and I didn’t have to rewire anything to correct it. However, it turned out when I was coding that the node marked as “R” was actually the green one, and the one marked “G” was the red one. It was easily fixed by changing the PIN in the code after some troubleshooting. So, start with connecting according to the datasheet, and then perform some smaller tests to ensure the modules are responding as expected before proceeding to more advanced code.
+
+![image](https://hackmd.io/_uploads/rkg66FqHle.png)
 *Figure 2: Circuit diagram drawn in Fritzing.*
 
-![Hardware](https://hackmd.io/_uploads/rkAg-QVHxg.png)
+![Hardware](https://hackmd.io/_uploads/BkVAxq5ree.jpg)
 *Figure 3: Photograph of connected hardware.*
 
 ### Electrical calculations
@@ -81,7 +82,7 @@ Many different components are connected to create a dashboard that visualizes th
 *Figure 4: Diagram of the functionality and connectivity between the different components.*
 
 ### Setting up the platform
-Remember that your platform will also need to be able to transmit the data between the Pico and the platform. I chose WiFi and Mosquitto for this, and you can read about that setup under "Transmitting the data/connectivity". Make sure to this step first.
+Remember that your platform will also need to be able to transmit the data between the Pico and the platform. I chose WiFi and Mosquitto for this, and you can read about that setup under "Transmitting the data/connectivity". Make sure to this step first. 
 
 First, set up your InfluxDB user by typing http://localhost:8086/ into your browser and following the instructions to create the initial user. You will get an API token, which is a long string of code containing letters, numbers, and special characters. Copy this entire code exactly and keep it for later. Copy all the credentials you used, as well as the Organization name (I used “School”) and the Initial Bucket name (I used “Aeroponics_monitoring”, don’t use blank spaces).
 
@@ -112,6 +113,7 @@ I then had the code for connecting to the MQTT client before starting to define 
 ```
 #DHT11 sensor
 ambientsensor = DHT11(Pin(22))
+bucketsensor = DHT11(Pin(16))
 ```
 You will need code for how the Pico publishes data to the client for each topic, which, for brightness, including calculations to interpret the analog signal, looks like this:
 ```
@@ -131,17 +133,20 @@ After all definitions and functions have been defined, you need your main loop w
 try:
     connect_to_mqtt()  
     while True:
-       try:
+        try:
+            bucketsensor.measure()
             ambientsensor.measure() #We need the first four lines to get the data for changing the LED
             temperature = ambientsensor.temperature()
             humidity = ambientsensor.humidity()
             check_ambient(temperature, humidity) #Will update the LED color
-            publish_humidity(client) #Publish data according to the previous definition
-            publish_temperature(client) #Publish data according to the previous definition
-            publish_brightness(client) #Publish data according to the previous definition
+            publish_PL_humidity(client) #These rows publishes data according to the previous definition
+            publish_PL_temperature(client)
+            publish_RL_humidity(client)
+            publish_RL_temperature(client)
+            publish_brightness(client) 
         except Exception as error:
             print("Exception occurred", error) #We get an error if something goes wrong
-        sleep(600) #then the Pico sleeps for 10 minutes before repeating the loop
+        sleep(5) #then the Pico sleeps for 10 minutes before repeating the loop
 ```
 Lastly, we tell the Pico how to shut down, to get a visual identification when the Pico is off, we also turn off the LED light:
 ```
@@ -186,9 +191,13 @@ When new to Grafana I’d recommend downloading a finished dashboard and then al
 3.	And then click on “Script Editor” for the code. Copy this, then switch to Grafana where you add a dashboard and then a visualisation and add the code in the box for “queries”: 
 ![image](https://hackmd.io/_uploads/rkp4KbBSxl.png)	*Figure 8: A print-screen on how to add the JSON script to make a query in Grafana.*
 
-The temperature and humidity section in my Grafana looks like this:
-![image](https://hackmd.io/_uploads/Sk-CpdtBxx.png)
-*Figure 9: A print-screen of a dashboard section from Grafana. Current and historic temperature and humidity readings, is shown. For temperature, cold climates will shift to blue, while too hot climates will shift to red. For humidity, we instead have yellow for too arid and blue for too humid. In both cases, optimal climates are green.*
+The temperature and humidity section for the plant level in my Grafana looks like this:
+![image](https://hackmd.io/_uploads/H10UV5crxg.png)
+*Figure 9: A print-screen of a dashboard section from Grafana. Current and historic temperature and humidity readings, is shown. For temperature, cold climates will shift to blue, while too hot climates will shift to red. For humidity, we instead have yellow for too dry and blue for too wet. In both cases, optimal climates are green.*
+
+and for brightness at the plant level it looks like this:
+![image](https://hackmd.io/_uploads/HyVNVq9Blg.png)
+*Figure 10: A print screen of a visual of historic brightness data, here with a test shown in which I turned of the light in the room. Bright in yellow and dark in purple.*
 
 The data is refreshed every 5 minutes to collect new data from InfluxDB where the data is stored. As mentioned before, I chose this solution over Adafruit due to its more inclusive free version, which offers scalability, additional visualization options, including data conversions, and a wider range of customization options. Another benefit is that InfluxDB stores data indefinitely, making it easy to download for further analysis. 
 
@@ -197,7 +206,7 @@ More alerts and automations can be added, but currently, I have an automation th
 A comparison with the previous Adafruit dashboard is shown in Figure XX. I find the Grafana version more visually pleasing, likely because it was easy to adjust the format to look exactly how I wanted it. However, aside from that, it was also easier to set up the figures to provide more data, such as having all thresholds visible and represented by their own color, so we can immediately see how close a reading is to the thresholds. One positive aspect with Adafruit, however, was the ease with which you could set alerts and webhooks to post messages on Discord, for example.
 
 ![image](https://hackmd.io/_uploads/HkNxc-rBxx.png)
-*Figure 10: An Adafruit dashboard showing current temperature, humidity, and light level, switching to red when thresholds are reached, as well as historical data over the last week.*
+*Figure 11: An Adafruit dashboard showing current temperature, humidity, and light level, switching to red when thresholds are reached, as well as historical data over the last week.*
 
 ## Finalizing the design
 Overall, it went better than I expected, considering I'm a chemist and find coding to be rather challenging. However, it was enjoyable to learn more about it, and in the end, I obtained a functioning device that I will continue to improve over the summer. Some improvements I’ve already planned:
@@ -208,6 +217,6 @@ Overall, it went better than I expected, considering I'm a chemist and find codi
 •	Add more automation based on the readings, like for example connecting an on/off switch to the fogger and controlling this based on humidity levels in the bucket.
 
 ![Light_red](https://hackmd.io/_uploads/rktDs-Srgl.png)
-*Figure 11: Picture of the first test where I connected it to the wall power and placed it in the window for kitchen readings, the lamp is red because it was more than 27 degrees celsius.*
+*Figure 12: Picture of the first test where I connected it to the wall power and placed it in the window for kitchen readings, the lamp is red because it was more than 27 degrees celsius.*
 
 *More pictures and video demonstration will show up sometimes during the week. :>
