@@ -217,7 +217,6 @@ Overall, it went better than I expected, considering I'm a chemist and find codi
 •	Add more automation based on the readings, like for example connecting an on/off switch to the fogger and controlling this based on humidity levels in the bucket.
 
 ![Light_red](https://hackmd.io/_uploads/rktDs-Srgl.png)
-
 *Figure 12: Picture of the first test where I connected an earlier version to the wall power and placed it in the window for kitchen readings, the lamp is red because it was more than 27 degrees celsius.*
 
 *More pictures and video demonstration will show up sometimes during the week. :>
