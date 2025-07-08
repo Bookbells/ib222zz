@@ -146,7 +146,7 @@ try:
             publish_brightness(client) 
         except Exception as error:
             print("Exception occurred", error) #We get an error if something goes wrong
-        sleep(5) #then the Pico sleeps for 10 minutes before repeating the loop
+        sleep(600) #then the Pico sleeps for 10 minutes before repeating the loop
 ```
 Lastly, we tell the Pico how to shut down, to get a visual identification when the Pico is off, we also turn off the LED light:
 ```
