@@ -17,8 +17,9 @@ def connect_to_mqtt():
         print("Failed to connect to MQTT Broker")
 
 #All relevant pieces like Sensors and Actuators are listed here
-#DHT11 sensor
+#DHT11 sensors
 ambientsensor = DHT11(Pin(22))
+bucketsensor = DHT11(Pin(16))
 
 #Photo Resistor light sensor
 ldr = ADC(Pin(27))
@@ -28,21 +29,43 @@ LED_Pin_Red = Pin(3, Pin.OUT)
 LED_Pin_Green = Pin(2, Pin.OUT)
 LED_Pin_Blue = Pin(4, Pin.OUT)
 
-#Function to publish DHT11 humidity data to MQTT broker
-def publish_humidity(client):
+#Function to publish DHT11 ambient humidity data to MQTT broker
+#PL stand for Plant Level
+def publish_PL_humidity(client):
     try:
         humidity = ambientsensor.humidity()
-        print("Publishing: Humidity: {}%".format(humidity))
-        client.publish(keys.MQTT_TOPIC_HUMIDITY, b"%.2f" % humidity)
+        print("Publishing: Ambient humidity: {}%".format(humidity))
+        client.publish(keys.MQTT_AMBIENT_HUMIDITY, b"%.2f" % humidity)
     except Exception as e:
         print(e)
         
-#Function to publish DHT11 humidity data to MQTT broker
-def publish_temperature(client):
+#Function to publish DHT11 ambient temperature data to MQTT broker
+#PL stand for Plant Level
+def publish_PL_temperature(client):
     try:
         temperature = ambientsensor.temperature()
-        print("Publishing: Temperature: {}°C".format(temperature))
-        client.publish(keys.MQTT_TOPIC_TEMP, b"%.2f" % temperature)
+        print("Publishing: Ambient temperature: {}°C".format(temperature))
+        client.publish(keys.MQTT_AMBIENT_TEMP, b"%.2f" % temperature)
+    except Exception as e:
+        print(e)
+
+#Function to publish DHT11 bucket humidity data to MQTT broker
+#RL stand for root level
+def publish_RL_humidity(client):
+    try:
+        humidity2 = bucketsensor.humidity()
+        print("Publishing: Root humidity: {}%".format(humidity2))
+        client.publish(keys.MQTT_BUCKET_HUMIDITY, b"%.2f" % humidity2)
+    except Exception as e:
+        print(e)
+        
+#Function to publish DHT11 bucket temperature data to MQTT broker
+#RL stand for root level
+def publish_RL_temperature(client):
+    try:
+        temperature2 = bucketsensor.temperature()
+        print("Publishing: Root temperature: {}°C".format(temperature2))
+        client.publish(keys.MQTT_BUCKET_TEMP, b"%.2f" % temperature2)
     except Exception as e:
         print(e)
         
@@ -93,16 +116,19 @@ try:
     connect_to_mqtt()  
     while True:
         try:
+            bucketsensor.measure()
             ambientsensor.measure() #We need the first four lines to get the data for changing the LED
             temperature = ambientsensor.temperature()
             humidity = ambientsensor.humidity()
             check_ambient(temperature, humidity) #Will update the LED color
-            publish_humidity(client) #Publish data according to the previous definition
-            publish_temperature(client) #Publish data according to the previous definition
-            publish_brightness(client) #Publish data according to the previous definition
+            publish_PL_humidity(client) #These rows publishes data according to the previous definition
+            publish_PL_temperature(client)
+            publish_RL_humidity(client)
+            publish_RL_temperature(client)
+            publish_brightness(client) 
         except Exception as error:
             print("Exception occurred", error) #We get an error if something goes wrong
-        sleep(600) #then the Pico sleeps for 10 minutes before repeating the loop
+        sleep(5) #then the Pico sleeps for 10 minutes before repeating the loop
     
 finally: # ... disconnect the client and turn off LED
     client.disconnect()   
