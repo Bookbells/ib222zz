@@ -219,4 +219,5 @@ Overall, it went better than I expected, considering I'm a chemist and find codi
 ![Light_red](https://hackmd.io/_uploads/rktDs-Srgl.png)
 *Figure 12: Picture of the first test where I connected an earlier version to the wall power and placed it in the window for kitchen readings, the lamp is red because it was more than 27 degrees celsius.*
 
-*More pictures and video demonstration will show up sometimes during the week. :>
+![IMG_6172](https://hackmd.io/_uploads/SyrLd2jrxx.jpg)
+*Figure 13: Picture of the final project with the IoT mounted in a cardboard box and attached to wall power and the aeroponics system.*
