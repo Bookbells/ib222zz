@@ -49,6 +49,7 @@ The next step is to update the firmware in the Pico, this is done by downloading
 The next essential software for this setup is Docker, be sure that you pick the correct version for your operating system. For Windows, it will automatically install a workaround to use it since it’s designed to work in Linux, allow this, and it will work.
 After installing Docker, you need to pull the images you will be using. I used the search bar, but you can also use the command “Docker pull XXX” and replace XXX with the name of the image. The images I pulled were “eclipse-mosquitto:latest”, “telegraf: latest”, “influxdb:latest”, and “grafana/grafana:latest”. More about how to get the images in a working container under the section “Setting up the platform”. For now you should be able to see something like this under “Images”: 
 ![image](https://hackmd.io/_uploads/S15XHhfHxg.png)
+
 *Figure 1: A printscreen of the downloaded images in my Docker.*
 
 Before you can get anything working here, you will need to connect to a network. I picked a WiFi solution in boot.py, see the section "Transmitting the data / connectivity".
@@ -62,9 +63,11 @@ Now comes the part where you connect all the hardware. I connected everything as
 An important note here is that sometimes the nodes on the smaller modules can be switched, as was the case both for my LDR and the RGB LED light. In my comment, you can see why I, in my case, had to switch the connections for signal and ground for the LDR module. For the RBD LED, you can't see the shift, and I didn’t have to rewire anything to correct it. However, it turned out when I was coding that the node marked as “R” was actually the green one, and the one marked “G” was the red one. It was easily fixed by changing the PIN in the code after some troubleshooting. So, start with connecting according to the datasheet, and then perform some smaller tests to ensure the modules are responding as expected before proceeding to more advanced code.
 
 ![image](https://hackmd.io/_uploads/rkg66FqHle.png)
+
 *Figure 2: Circuit diagram drawn in Fritzing.*
 
 ![Hardware](https://hackmd.io/_uploads/BkVAxq5ree.jpg)
+
 *Figure 3: Photograph of connected hardware.*
 
 ### Electrical calculations
@@ -79,6 +82,7 @@ The platform is currently installed on my laptop, but it will be moved to a loca
 Many different components are connected to create a dashboard that visualizes the sensor data from your Pico; they are connected and function as shown in Figure 4.
 
 ![image](https://hackmd.io/_uploads/BytYRGVSxx.png)
+
 *Figure 4: Diagram of the functionality and connectivity between the different components.*
 
 ### Setting up the platform
@@ -89,6 +93,7 @@ First, set up your InfluxDB user by typing http://localhost:8086/ into your brow
 In Docker, import the Grafana, InfluxDB, and Telegraf images. This can be done either by code: `docker pull {image_name}` or by searching for the image and pulling it. Then, create a “docker-compose.yml” file and a “telegraf.conf” file, examples are available in the “Code” section. Make sure to update with your own user name, password, etc, from the previous step, as well as make up a user name and password for Grafana, and locate the credentials for you Mosquitto solution and IP address. I wrote the files in Notepad and placed them in a new folder under C:\Users\Isabelle\School project. Update this to reflect where you have placed your own files. Then, open that folder in Docker with the command: cd "C:\Users\..." before running the command “docker compose up -d” to build the stack. I had to do this several times before I got the entire stack working, using “docker command down” in between since I got errors for the telegraf file having an additional extension “txt” for example, and some coding errors, but eventually you should get something like this:
 
 ![image](https://hackmd.io/_uploads/BJbTnzEBlx.png)
+
 *Figure 5: Print-screen of running containers.*
 
 Next, you need to set up the InfluxDB plug-in in Grafana. Go to http://localhost:3000/ then to Connections/Add new connection and search for InfluxDB. Pick Query language “Flux” and add URL http://influxdb:8086. Also, add your InfluxDB credentials, and then click “Save and Test”. Click on "Build a dashboard" in the top right corner. See section “Presenting the data” for how to set up a Dashboard.
@@ -97,6 +102,7 @@ Next, you need to set up the InfluxDB plug-in in Grafana. Go to http://localhost
 Initially, you will only have a main.py where you’ll run the main coding, and boot.py which will run each time the Pico is started, you should also have a file for all your credentials, make a new file on the Pico and name it “keys.py”, for example code of what you will need see the example-keys.py file under “Code”. I chose to have the code for the WiFi-connection in boot.py, and had to install a library-file (simple.py) for the Mosquitto MQTT solution, see how I set that up under “Transmitting the data/connectivity” and under “Code”. So for this project there is four files on the Pico: main.py, boot.py, keys.py and simple.py:
 
 ![image](https://hackmd.io/_uploads/r1V5jmEBeg.png)
+
 *Figure 6: Screen-shot of Raspberry Pi Pico files in Thonny IDE.*
 
 For complete code see the files under “Code”. We will first need to tell the Pico to collect all the information it will need to understand the code:
@@ -188,16 +194,25 @@ listener 1883 0.0.0.0
 When new to Grafana I’d recommend downloading a finished dashboard and then altering it rather than trying to build it from scratch. I started out with this template: https://grafana.com/grafana/dashboards/16035-zero-weather/ and then changed it to what you see in Figure 9. When searching for templates, you can check “InfluxDB” as the source of data and then search for “temperature,” for example, to find good examples. You can then copy the JSON code of the dashboard and upload it to your own dashboard. For my code, see the file “ib222zz_grafana.json”. Note that you need to update this with the correct data source from your InfluxDB plug-in according to the following steps:
 1.	Go to “Data Explore” in http://localhost:8086. If everything is working you pick the data series you want in your Dashboard like this: ![image](https://hackmd.io/_uploads/B1vmFZrHgx.png)
 *Figure 7: A print-screen of how to get the JSON script for the data source.*
-3.	And then click on “Script Editor” for the code. Copy this, then switch to Grafana where you add a dashboard and then a visualisation and add the code in the box for “queries”: 
-![image](https://hackmd.io/_uploads/rkp4KbBSxl.png)	*Figure 8: A print-screen on how to add the JSON script to make a query in Grafana.*
+
+2.	And then click on “Script Editor” for the code. Copy this, then switch to Grafana where you add a dashboard and then a visualisation and add the code in the box for “queries”: 
+![image](https://hackmd.io/_uploads/rkp4KbBSxl.png)	
+*Figure 8: A print-screen on how to add the JSON script to make a query in Grafana.*
 
 The temperature and humidity section for the plant level in my Grafana looks like this:
-![image](https://hackmd.io/_uploads/H10UV5crxg.png)
+![image](https://hackmd.io/_uploads/HkP_c2oBle.png)
+
 *Figure 9: A print-screen of a dashboard section from Grafana. Current and historic temperature and humidity readings, is shown. For temperature, cold climates will shift to blue, while too hot climates will shift to red. For humidity, we instead have yellow for too dry and blue for too wet. In both cases, optimal climates are green.*
 
 and for brightness at the plant level it looks like this:
-![image](https://hackmd.io/_uploads/HyVNVq9Blg.png)
+![image](https://hackmd.io/_uploads/Sy7nqhsSge.png)
+
 *Figure 10: A print screen of a visual of historic brightness data, here with a test shown in which I turned of the light in the room. Bright in yellow and dark in purple.*
+
+The bucket climate is monitored in a new row like this:
+![image](https://hackmd.io/_uploads/HJf1ihsBxl.png)
+
+*Figure 11: Monitoring of the root level climate in the bucket for nutritional solution. *
 
 The data is refreshed every 5 minutes to collect new data from InfluxDB where the data is stored. As mentioned before, I chose this solution over Adafruit due to its more inclusive free version, which offers scalability, additional visualization options, including data conversions, and a wider range of customization options. Another benefit is that InfluxDB stores data indefinitely, making it easy to download for further analysis. 
 
@@ -206,7 +221,8 @@ More alerts and automations can be added, but currently, I have an automation th
 A comparison with the previous Adafruit dashboard is shown in Figure XX. I find the Grafana version more visually pleasing, likely because it was easy to adjust the format to look exactly how I wanted it. However, aside from that, it was also easier to set up the figures to provide more data, such as having all thresholds visible and represented by their own color, so we can immediately see how close a reading is to the thresholds. One positive aspect with Adafruit, however, was the ease with which you could set alerts and webhooks to post messages on Discord, for example.
 
 ![image](https://hackmd.io/_uploads/HkNxc-rBxx.png)
-*Figure 11: An Adafruit dashboard showing current temperature, humidity, and light level, switching to red when thresholds are reached, as well as historical data over the last week.*
+
+*Figure 12: An Adafruit dashboard showing current temperature, humidity, and light level, switching to red when thresholds are reached, as well as historical data over the last week.*
 
 ## Finalizing the design
 Overall, it went better than I expected, considering I'm a chemist and find coding to be rather challenging. However, it was enjoyable to learn more about it, and in the end, I obtained a functioning device that I will continue to improve over the summer. Some improvements I’ve already planned:
@@ -217,7 +233,9 @@ Overall, it went better than I expected, considering I'm a chemist and find codi
 •	Add more automation based on the readings, like for example connecting an on/off switch to the fogger and controlling this based on humidity levels in the bucket.
 
 ![Light_red](https://hackmd.io/_uploads/rktDs-Srgl.png)
-*Figure 12: Picture of the first test where I connected an earlier version to the wall power and placed it in the window for kitchen readings, the lamp is red because it was more than 27 degrees celsius.*
+
+*Figure 13: Picture of the first test where I connected it to the wall power and placed it in the window for kitchen readings, the lamp is red because it was more than 27 degrees celsius.*
 
 ![IMG_6172](https://hackmd.io/_uploads/SyrLd2jrxx.jpg)
-*Figure 13: Picture of the final project with the IoT mounted in a cardboard box and attached to wall power and the aeroponics system.*
+
+*Figure 14: Picture of the final project with the IoT mounted in a cardboard box and attached to wall power and the aeroponics system.*
