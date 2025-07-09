@@ -230,6 +230,8 @@ Overall, it went better than I expected, considering I'm a chemist and find codi
 *	Determine a way to enhance the usefulness of the LDR sensor like a calculation of sun hours.
 *	Add more sensors for the nutritional solution in the bucket, such as pH, TDS, and/or water level.
 *	Add more automation based on the readings, like for example connecting an on/off switch to the fogger and controlling this based on humidity levels in the bucket.
+*	Limit electricity consumption by turning off Wi-Fi when not in use.
+*	Add a fail-safe that reconnects to Mosquitto after crashes.
 
 ![Light_red](https://hackmd.io/_uploads/rktDs-Srgl.png)
 
