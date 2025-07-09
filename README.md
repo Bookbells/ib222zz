@@ -70,9 +70,6 @@ An important note here is that sometimes the nodes on the smaller modules can be
 
 *Figure 3: Photograph of connected hardware.*
 
-### Electrical calculations
-*Nothing here yet, oh no! Any tips on what to add here would be aprreciated. :>*
-
 ## Platform
 I have chosen to use a TIG (Telegraf, InfluxDB and Grafana) stack with Grafana for visualisation. Initially, I created an Adafruit platform. I got everything working but rather quickly noticed that I couldn’t design the dashboard the way I wanted, that there was a limit to the amount of data and that data was only saved for a month (in the free version), since I want to monitor my aeroponics system over a more extended period of time and have more options when building the dashboard I switched to a TIG-stack with Grafana for visualisation. See pictures under “Presenting the data” for the difference in the dashboard. 
 
