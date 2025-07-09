@@ -226,11 +226,10 @@ A comparison with the previous Adafruit dashboard is shown in Figure XX. I find 
 
 ## Finalizing the design
 Overall, it went better than I expected, considering I'm a chemist and find coding to be rather challenging. However, it was enjoyable to learn more about it, and in the end, I obtained a functioning device that I will continue to improve over the summer. Some improvements I’ve already planned:
-•	Add alerts in either InfluxDB or Grafana so I can view text messages based on triggers in my data.
-•	Sort out a container for all the tech, perhaps 3D-printed.
-•	Determine a way to enhance the usefulness of the LDR sensor or replace it with a more accurate one, allowing for a more precise indication of sun hours and/or light intensity.
-•	Add more sensors for the nutritional solution in the bucket, such as pH, TDS, and/or water level.
-•	Add more automation based on the readings, like for example connecting an on/off switch to the fogger and controlling this based on humidity levels in the bucket.
+*	Add alerts in either InfluxDB or Grafana so I can view text messages based on triggers in my data.
+*	Determine a way to enhance the usefulness of the LDR sensor like a calculation of sun hours.
+*	Add more sensors for the nutritional solution in the bucket, such as pH, TDS, and/or water level.
+*	Add more automation based on the readings, like for example connecting an on/off switch to the fogger and controlling this based on humidity levels in the bucket.
 
 ![Light_red](https://hackmd.io/_uploads/rktDs-Srgl.png)
 
